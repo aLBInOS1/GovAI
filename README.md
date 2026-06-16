@@ -11,7 +11,7 @@
 
 🌐 **English version:** [README_EN.md](README_EN.md)
 
-🔗 **Сравнение с базовой моделью:** [Смотреть результаты](https://albinos1.github.io/GovAI/comparison_viewer.html) | [Model Comparison](https://albinos1.github.io/GovAI/comparison_viewer.html)
+🔗 **Сравнение с базовой моделью:** [Смотреть результаты](https://albinos1.github.io/GovAI/comparison_viewer.html)
 
 ---
 
@@ -25,7 +25,6 @@
 - [Установка и использование](#установка-и-использование)
 - [Сравнение с базовой моделью](#сравнение-с-базовой-моделью)
 - [Результаты](#результаты)
-- [Публикации](#публикации)
 - [Cite](#cite)
 
 ---
@@ -235,6 +234,8 @@ search_purchases(
 ```bash
 pip install torch transformers unsloth peft accelerate matplotlib numpy
 ```
+
+Адаптер доступен в [релизах](https://github.com/aLBInOS1/GovAI/releases/)
 
 ### Инференс с LoRA-адаптером
 ```python

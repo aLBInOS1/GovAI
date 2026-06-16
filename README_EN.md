@@ -25,7 +25,6 @@
 - [Installation & Usage](#installation--usage)
 - [Model Comparison](#model-comparison)
 - [Results](#results)
-- [Publications](#publications)
 - [Cite](#cite)
 
 ---
@@ -216,6 +215,8 @@ search_purchases(
 ```bash
 pip install torch transformers unsloth peft accelerate matplotlib numpy
 ```
+
+The adapter is available in [releases](https://github.com/aLBInOS1/GovAI/releases/)
 
 ### Inference with LoRA Adapter
 ```python
