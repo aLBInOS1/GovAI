@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тестирование моделей — LoRA vs Base</title>
+    <!-- marked.js для рендеринга Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        /* ... все стили без изменений ... */
         :root {
             --bg: #0d1117;
             --surface: #161b22;
@@ -21,27 +22,38 @@
             --orange-bg: rgba(210, 153, 29, 0.12);
             --red: #f85149;
             --purple: #a371f7;
-            --radius: 10px;
-            --radius-sm: 6px;
-            --font-mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
             --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
-            --transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+            --btn-hover-border: #5a6575;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body.light-theme {
+            --bg: #ffffff;
+            --surface: #f6f8fa;
+            --surface-elevated: #eaeef2;
+            --border: #d0d7de;
+            --text: #1f2328;
+            --text-secondary: #656d76;
+            --accent: #0969da;
+            --accent-glow: rgba(9, 105, 218, 0.15);
+            --green: #1a7f37;
+            --green-bg: rgba(26, 127, 55, 0.12);
+            --orange: #bf8700;
+            --orange-bg: rgba(191, 135, 0, 0.12);
+            --red: #cf222e;
+            --purple: #8250df;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --btn-hover-border: #afb8c1;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: var(--font-sans);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
             line-height: 1.6;
             min-height: 100vh;
-            padding: 0;
+            transition: background 0.2s, color 0.2s;
         }
 
         .header {
@@ -75,31 +87,25 @@
         .header-title .icon {
             width: 34px;
             height: 34px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, #58a6ff, #a371f7);
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
         }
+
         .badge {
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            padding: 5px 12px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.78rem;
             font-weight: 600;
-            letter-spacing: 0.02em;
         }
-        .badge-lora {
-            background: var(--accent-glow);
-            color: var(--accent);
-        }
-        .badge-base {
-            background: var(--orange-bg);
-            color: var(--orange);
-        }
+        .badge-lora { background: var(--accent-glow); color: var(--accent); }
+        .badge-base  { background: var(--orange-bg); color: var(--orange); }
 
         .url-bar-wrap {
             background: var(--surface-elevated);
@@ -112,6 +118,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
         .url-bar label {
             font-size: 0.82rem;
@@ -120,90 +127,71 @@
             font-weight: 500;
         }
         .url-bar input {
-            flex: 1;
+            flex: 1 1 240px;
             background: var(--bg);
             border: 1px solid var(--border);
             color: var(--text);
             padding: 9px 14px;
-            border-radius: var(--radius-sm);
-            font-family: var(--font-mono);
+            border-radius: 6px;
+            font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', monospace;
             font-size: 0.8rem;
-            transition: var(--transition);
-            min-width: 240px;
+            transition: border-color 0.18s, box-shadow 0.18s;
+            min-width: 200px;
         }
         .url-bar input:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px var(--accent-glow);
         }
+
         .btn {
             padding: 9px 18px;
-            border-radius: var(--radius-sm);
+            border-radius: 6px;
             border: 1px solid var(--border);
             cursor: pointer;
             font-weight: 600;
             font-size: 0.82rem;
-            transition: var(--transition);
+            transition: background 0.18s, border-color 0.18s;
             white-space: nowrap;
-            font-family: var(--font-sans);
-        }
-        .btn-primary {
-            background: #238636;
-            color: #fff;
-            border-color: #2ea043;
-        }
-        .btn-primary:hover {
-            background: #2ea043;
-        }
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-        }
-        .btn-secondary:hover {
-            background: var(--surface-elevated);
-            border-color: #5a6575;
-        }
-        .btn-nav {
-            padding: 6px 14px;
-            font-size: 0.78rem;
-            background: var(--surface);
-            color: var(--text);
-            border-radius: 20px;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            transition: var(--transition);
-            font-family: var(--font-sans);
-        }
-        .btn-nav:hover {
-            border-color: var(--accent);
-            background: var(--surface-elevated);
-        }
-        .btn-nav.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-        /* Стиль для кнопки репозитория */
-        .btn-repo {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
+            font-family: inherit;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-        }
-        .btn-repo:hover {
-            background: var(--surface-elevated);
-            border-color: #5a6575;
             text-decoration: none;
+            background: var(--surface);
             color: var(--text);
+        }
+        .btn:hover { background: var(--surface-elevated); border-color: var(--btn-hover-border); }
+        .btn-primary { background: #238636; color: #fff; border-color: #2ea043; }
+        .btn-primary:hover { background: #2ea043; border-color: #2ea043; }
+        .btn-nav {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+        .btn-nav.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        .theme-toggle-btn, .view-toggle-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 5px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text);
+            transition: background 0.18s, border-color 0.18s;
+            font-family: inherit;
+        }
+        .theme-toggle-btn:hover, .view-toggle-btn:hover {
+            background: var(--surface-elevated);
+            border-color: var(--btn-hover-border);
         }
 
         .main {
@@ -212,51 +200,13 @@
             padding: 24px 28px 48px;
         }
 
-        .status-bar {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-        .status-dot.loading {
-            background: var(--orange);
-        }
-        .status-dot.loaded {
-            background: var(--green);
-            animation: none;
-        }
-        .status-dot.error {
-            background: var(--red);
-            animation: none;
-        }
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.3;
-            }
-        }
-
         .section {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: 10px;
             padding: 18px 22px;
             margin-bottom: 18px;
             box-shadow: var(--shadow);
-            transition: var(--transition);
         }
         .section-header {
             display: flex;
@@ -269,29 +219,21 @@
             letter-spacing: 0.04em;
             color: var(--text-secondary);
         }
-        .section-header .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 3px;
-        }
-        .dot-system {
-            background: #8b949e;
-        }
-        .dot-prompt {
-            background: var(--accent);
-        }
+        .section-header .dot { width: 10px; height: 10px; border-radius: 3px; }
+        .dot-system { background: #8b949e; }
+        .dot-prompt { background: var(--accent); }
         .section pre {
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
+            border-radius: 6px;
             padding: 14px 18px;
-            font-family: var(--font-mono);
+            font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
             font-size: 0.78rem;
             white-space: pre-wrap;
             word-break: break-word;
             max-height: 260px;
             overflow-y: auto;
-            color: #c9d1d9;
+            color: var(--text);
             line-height: 1.55;
         }
 
@@ -301,30 +243,17 @@
             gap: 18px;
             margin-bottom: 18px;
         }
-        @media (max-width: 860px) {
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
-        }
         .cmp-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: 10px;
             overflow: hidden;
             box-shadow: var(--shadow);
-            transition: var(--transition);
             display: flex;
             flex-direction: column;
         }
-        .cmp-card:hover {
-            border-color: #5a6575;
-        }
-        .cmp-card.lora {
-            border-top: 3px solid var(--accent);
-        }
-        .cmp-card.base {
-            border-top: 3px solid var(--orange);
-        }
+        .cmp-card.lora { border-top: 3px solid var(--accent); }
+        .cmp-card.base  { border-top: 3px solid var(--orange); }
         .cmp-card-header {
             padding: 14px 18px;
             display: flex;
@@ -344,16 +273,57 @@
         .cmp-card-body {
             padding: 14px 18px;
             flex: 1;
-            font-family: var(--font-mono);
-            font-size: 0.77rem;
-            white-space: pre-wrap;
-            word-break: break-word;
             max-height: 520px;
             overflow-y: auto;
-            color: #c9d1d9;
-            line-height: 1.55;
             background: var(--bg);
+            line-height: 1.55;
         }
+        /* Plain text view */
+        .plain-view {
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+            font-size: 0.77rem;
+            color: var(--text);
+        }
+        /* Markdown view */
+        .markdown-view {
+            white-space: normal;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .markdown-view h1, .markdown-view h2, .markdown-view h3 {
+            margin-top: 1.4em;
+            margin-bottom: 0.6em;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.3em;
+        }
+        .markdown-view h1 { font-size: 1.6em; }
+        .markdown-view h2 { font-size: 1.3em; }
+        .markdown-view h3 { font-size: 1.1em; }
+        .markdown-view p { margin-bottom: 0.8em; }
+        .markdown-view ul, .markdown-view ol { margin: 0.8em 0; padding-left: 2em; }
+        .markdown-view li { margin-bottom: 0.3em; }
+        .markdown-view pre {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.8rem;
+        }
+        .markdown-view code {
+            background: var(--surface-elevated);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.85em;
+        }
+        .markdown-view pre code { background: none; padding: 0; }
 
         .metrics-row {
             display: flex;
@@ -362,40 +332,20 @@
             align-items: center;
             padding: 12px 0;
         }
-        .metric {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.84rem;
-            font-weight: 500;
-        }
-        .metric-value {
-            font-weight: 700;
-            font-family: var(--font-mono);
-            font-size: 0.88rem;
-        }
-        .metric.faster .metric-value {
-            color: var(--green);
-        }
-        .metric.slower .metric-value {
-            color: var(--orange);
-        }
+        .metric { display: flex; align-items: center; gap: 8px; font-size: 0.84rem; font-weight: 500; }
+        .metric-value { font-weight: 700; font-family: 'SF Mono', monospace; font-size: 0.88rem; }
+        .metric.faster .metric-value { color: var(--green); }
+        .metric.slower .metric-value { color: var(--orange); }
         .delta-badge {
             display: inline-block;
             padding: 3px 10px;
             border-radius: 14px;
             font-weight: 700;
             font-size: 0.76rem;
-            font-family: var(--font-mono);
+            font-family: 'SF Mono', monospace;
         }
-        .delta-badge.win {
-            background: var(--green-bg);
-            color: var(--green);
-        }
-        .delta-badge.loss {
-            background: var(--orange-bg);
-            color: var(--orange);
-        }
+        .delta-badge.win  { background: var(--green-bg); color: var(--green); }
+        .delta-badge.loss { background: var(--orange-bg); color: var(--orange); }
 
         .test-nav {
             display: flex;
@@ -404,12 +354,7 @@
             margin-bottom: 16px;
             align-items: center;
         }
-        .test-nav .label {
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-            margin-right: 4px;
-        }
+        .test-nav .label { font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; margin-right: 4px; }
         .test-info {
             font-size: 0.8rem;
             color: var(--text-secondary);
@@ -418,20 +363,16 @@
             gap: 16px;
             flex-wrap: wrap;
         }
-        .test-info span {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .test-info span { display: inline-flex; align-items: center; gap: 4px; }
         .tag {
             display: inline-block;
             padding: 3px 10px;
             border-radius: 12px;
             font-size: 0.72rem;
             font-weight: 600;
-            background: #1f2937;
-            color: #9ca3af;
-            border: 1px solid #374151;
+            background: var(--surface-elevated);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
         }
         .tag.task {
             background: rgba(163, 113, 247, 0.12);
@@ -444,53 +385,30 @@
             padding: 60px 20px;
             color: var(--text-secondary);
         }
-        .empty-state .icon-big {
-            font-size: 3rem;
-            margin-bottom: 16px;
-        }
+        .empty-state .icon-big { font-size: 3rem; margin-bottom: 16px; }
         .empty-state p {
             font-size: 0.9rem;
             max-width: 500px;
             margin: 0 auto;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #484f5a;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #484f5a; }
 
+        @media (max-width: 860px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
         @media (max-width: 600px) {
-            .header-inner {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .url-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .main {
-                padding: 14px 10px 32px;
-            }
-            .section {
-                padding: 12px 14px;
-            }
-            .cmp-card-body {
-                max-height: 340px;
-            }
-            .metrics-row {
-                gap: 12px;
-            }
+            .header-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .url-bar { flex-direction: column; align-items: stretch; }
+            .main { padding: 14px 10px 32px; }
+            .section { padding: 12px 14px; }
+            .cmp-card-body { max-height: 340px; }
+            .metrics-row { gap: 12px; }
         }
     </style>
 </head>
@@ -505,11 +423,17 @@
                 <span style="color:var(--text-secondary);">vs</span>
                 <span class="badge badge-base">Base (базовая)</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size:0.78rem;color:var(--text-secondary);" id="testCountLabel">—</span>
-                <a href="https://github.com/aLBInOS1/GovAI" target="_blank" class="btn-repo" title="Перейти в репозиторий">
+                <a href="https://github.com/aLBInOS1/GovAI" target="_blank" class="btn btn-nav" style="text-decoration:none;">
                     📁 Репозиторий
                 </a>
+                <button id="viewToggleBtn" class="view-toggle-btn" aria-label="Переключить вид ответов">
+                    <span id="viewIcon">📝</span>
+                </button>
+                <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Переключить тему">
+                    <span id="themeIcon">🌙</span>
+                </button>
             </div>
         </div>
     </div>
@@ -545,11 +469,52 @@
             const mainContent = document.getElementById('mainContent');
             const testCountLabel = document.getElementById('testCountLabel');
             const emptyState = document.getElementById('emptyState');
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            const themeIcon = document.getElementById('themeIcon');
+            const viewToggleBtn = document.getElementById('viewToggleBtn');
+            const viewIcon = document.getElementById('viewIcon');
 
             let allTestCases = [];
             let systemPrompt = '';
             let currentTestIdx = 0;
 
+            // ── Тема ─────────────────────────────
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    document.body.classList.add('light-theme');
+                    themeIcon.textContent = '☀️';
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.body.classList.remove('light-theme');
+                    themeIcon.textContent = '🌙';
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            applyTheme(savedTheme);
+            themeToggleBtn.addEventListener('click', () => {
+                const isLight = document.body.classList.contains('light-theme');
+                applyTheme(isLight ? 'dark' : 'light');
+            });
+
+            // ── Вид ответов (plain / markdown) ──
+            function getRenderMode() {
+                return localStorage.getItem('renderMode') || 'plain';
+            }
+            function setRenderMode(mode) {
+                localStorage.setItem('renderMode', mode);
+                viewIcon.textContent = mode === 'markdown' ? '📄' : '📝';
+            }
+            // Инициализация иконки при загрузке
+            viewIcon.textContent = getRenderMode() === 'markdown' ? '📄' : '📝';
+            viewToggleBtn.addEventListener('click', () => {
+                const current = getRenderMode();
+                const next = current === 'plain' ? 'markdown' : 'plain';
+                setRenderMode(next);
+                renderAll();
+            });
+
+            // ── Вспомогательные функции ─────────
             function escapeHTML(str) {
                 const div = document.createElement('div');
                 div.textContent = str;
@@ -560,32 +525,34 @@
                 if (seconds == null || isNaN(seconds)) return '—';
                 const mins = Math.floor(seconds / 60);
                 const secs = (seconds % 60).toFixed(1);
-                if (mins > 0) return `${mins} мин ${secs} сек`;
-                return `${secs} сек`;
+                return mins > 0 ? `${mins} мин ${secs} сек` : `${secs} сек`;
             }
 
             function formatDelta(loraSec, baseSec) {
                 if (!loraSec || !baseSec || baseSec === 0) return null;
                 const delta = loraSec - baseSec;
-                const pct = ((delta / baseSec) * 100);
+                const pct = (delta / baseSec) * 100;
                 const absDelta = Math.abs(delta);
                 const absPct = Math.abs(pct).toFixed(1);
                 if (delta > 0) {
-                    return {
-                        text: `+${formatTime(absDelta)} (+${absPct}%)`,
-                        cls: 'loss',
-                        label: 'медленнее'
-                    };
+                    return { text: `+${formatTime(absDelta)} (+${absPct}%)`, cls: 'loss', label: 'медленнее' };
                 } else if (delta < 0) {
-                    return {
-                        text: `−${formatTime(absDelta)} (−${absPct}%)`,
-                        cls: 'win',
-                        label: 'быстрее'
-                    };
+                    return { text: `−${formatTime(absDelta)} (−${absPct}%)`, cls: 'win', label: 'быстрее' };
                 }
                 return { text: 'Одинаково', cls: '', label: 'равно' };
             }
 
+            function formatResponse(text, mode) {
+                if (!text) return '';
+                if (mode === 'markdown') {
+                    // Используем marked для преобразования в HTML
+                    return marked.parse(text);
+                } else {
+                    return escapeHTML(text);
+                }
+            }
+
+            // ── Рендеринг ────────────────────────
             function renderAll() {
                 if (allTestCases.length === 0) {
                     mainContent.innerHTML = '';
@@ -601,6 +568,8 @@
 
                 const sysPrompt = tc.system || systemPrompt || '';
                 const delta = formatDelta(tc.lora_time_sec, tc.base_time_sec);
+                const mode = getRenderMode();
+                const viewClass = mode === 'markdown' ? 'markdown-view' : 'plain-view';
 
                 const html = `
                 <div class="section">
@@ -637,7 +606,7 @@
                                 ⏱ ${formatTime(tc.lora_time_sec)}
                             </span>
                         </div>
-                        <div class="cmp-card-body">${escapeHTML(tc.lora_response || '')}</div>
+                        <div class="cmp-card-body ${viewClass}">${formatResponse(tc.lora_response, mode)}</div>
                     </div>
                     <div class="cmp-card base">
                         <div class="cmp-card-header">
@@ -648,7 +617,7 @@
                                 ⏱ ${formatTime(tc.base_time_sec)}
                             </span>
                         </div>
-                        <div class="cmp-card-body">${escapeHTML(tc.base_response || '')}</div>
+                        <div class="cmp-card-body ${viewClass}">${formatResponse(tc.base_response, mode)}</div>
                     </div>
                 </div>
 
@@ -679,6 +648,7 @@
 
                 mainContent.innerHTML = html;
 
+                // Вешаем обработчики на кнопки навигации
                 mainContent.querySelectorAll('.btn-nav').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const idx = parseInt(this.getAttribute('data-idx'), 10);
@@ -691,6 +661,7 @@
                 });
             }
 
+            // ── Загрузка и парсинг ──────────────
             function parseAndLoad(data) {
                 let extracted = [];
                 let extractedSystem = '';
@@ -725,8 +696,7 @@
                 }
 
                 if (extracted.length === 0) {
-                    throw new Error(
-                        'Не удалось найти тестовые кейсы в JSON. Ожидаются объекты с полями test_id, prompt, lora_response, base_response.');
+                    throw new Error('Не удалось найти тестовые кейсы в JSON.');
                 }
 
                 allTestCases = extracted;
@@ -740,34 +710,33 @@
                 <div class="empty-state">
                     <div class="icon-big">⏳</div>
                     <p>Загрузка данных с <code>${escapeHTML(url)}</code>...</p>
-                    <span class="status-dot loading" style="display:inline-block;margin-top:12px;"></span>
+                    <span style="display:inline-block;margin-top:12px;color:var(--text-secondary);">⏳</span>
                 </div>`;
                 testCountLabel.textContent = 'Загрузка...';
 
                 let response;
                 try {
-                    response = await fetch(url, {
-                        headers: { 'Accept': 'application/json' },
-                    });
+                    response = await fetch(url, { headers: { 'Accept': 'application/json' } });
                 } catch (netErr) {
                     throw new Error(`Сетевая ошибка: ${netErr.message}. Проверьте URL и доступность ресурса.`);
                 }
 
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}. Проверьте корректность ссылки.`);
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}.`);
                 }
 
                 let data;
                 try {
                     data = await response.json();
                 } catch (jsonErr) {
-                    throw new Error(`Ошибка парсинга JSON: ${jsonErr.message}. Файл должен быть валидным JSON.`);
+                    throw new Error(`Ошибка парсинга JSON: ${jsonErr.message}.`);
                 }
 
                 parseAndLoad(data);
                 testCountLabel.textContent = `Тестов: ${allTestCases.length} — загружено ✅`;
             }
 
+            // ── Обработчики событий ─────────────
             btnLoad.addEventListener('click', async () => {
                 const url = jsonUrlInput.value.trim();
                 if (!url) {
@@ -790,24 +759,20 @@
             });
 
             jsonUrlInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    btnLoad.click();
-                }
+                if (e.key === 'Enter') btnLoad.click();
             });
 
-            // Автозагрузка, если в URL передан параметр ?json=... (необязательно)
+            // Автозагрузка при наличии параметра ?json=...
             const urlParams = new URLSearchParams(window.location.search);
             const queryUrl = urlParams.get('json') || urlParams.get('url') || urlParams.get('data');
             if (queryUrl) {
                 jsonUrlInput.value = queryUrl;
                 setTimeout(() => btnLoad.click(), 400);
             } else {
-                // Если параметра нет, просто показываем начальное состояние (пустой список)
                 renderAll();
             }
 
-            console.log('🧪 LoRA vs Base Model Comparison Dashboard готов.');
-            console.log('   Укажите URL вашего JSON и нажмите «Загрузить».');
+            console.log('🧪 Dashboard готов. Переключайте тему и формат ответов (plain/markdown).');
         })();
     </script>
 </body>
