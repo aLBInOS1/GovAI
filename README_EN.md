@@ -89,7 +89,7 @@ Unlike universal LLMs (GPT-4, Claude) and generic solutions (LM Studio + Qwen):
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │   ┌────────────────────┐      ┌────────────────────┐      ┌────────────────┐ │
-│   │    User Query      │────▶│   Qwen3.5-4B       │────▶│  LoRA Adapter  │ │
+│   │    User Query      │────▶│   Qwen3.5-4B       │────▶│  LoRA Adapter   │ │
 │   │    (input text)    │      │   (base model)     │      │  (rank = 16)   │ │
 │   └────────────────────┘      └────────────────────┘      └────────────────┘ │
 │                                                                              │
@@ -98,7 +98,7 @@ Unlike universal LLMs (GPT-4, Claude) and generic solutions (LM Studio + Qwen):
 │   ├────────────────────────────────────────────────────────────────────────┤ │
 │   │   ┌────────────────────┐  ┌────────────────────┐  ┌────────────────┐   │ │
 │   │   │   Markdown         │  │  Law Citations     │  │   Tool Calls   │   │ │
-│   │   │   Structure        │  │  (44-FZ, 223-FZ,  │  │   (chart,      │   │ │
+│   │   │   Structure        │  │  (44-FZ, 223-FZ,   │  │   (chart,      │   │ │
 │   │   │   (headings,       │  │   etc.)            │  │   search,      │   │ │
 │   │   │   lists, tables)   │  │                    │  │   etc.)        │   │ │
 │   │   └────────────────────┘  └────────────────────┘  └────────────────┘   │ │
