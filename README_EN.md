@@ -327,6 +327,7 @@ We conducted a comparison of GovAI (LoRA) vs base Qwen3.5-4B on test queries fro
 ### Limitations
 - Model requires verification of law citations (RAG layer recommended)
 - For production, dataset expansion to 5000+ examples is recommended
+- For work, it is advisable to use a model with a higher number of parameters
 
 ---
 
