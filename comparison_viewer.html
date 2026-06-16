@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование моделей — LoRA vs Base</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface-elevated: #1c2129;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.25);
+            --green: #3fb950;
+            --green-bg: rgba(63, 185, 80, 0.12);
+            --orange: #d2991d;
+            --orange-bg: rgba(210, 153, 29, 0.12);
+            --red: #f85149;
+            --purple: #a371f7;
+            --radius: 10px;
+            --radius-sm: 6px;
+            --font-mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+            --transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 28px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow);
+        }
+        .header-inner {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .header-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+        .header-title .icon {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #58a6ff, #a371f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .badge-lora {
+            background: var(--accent-glow);
+            color: var(--accent);
+        }
+        .badge-base {
+            background: var(--orange-bg);
+            color: var(--orange);
+        }
+
+        .url-bar-wrap {
+            background: var(--surface-elevated);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 28px;
+        }
+        .url-bar {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .url-bar label {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .url-bar input {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            transition: var(--transition);
+            min-width: 240px;
+        }
+        .url-bar input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .btn {
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.82rem;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-family: var(--font-sans);
+        }
+        .btn-primary {
+            background: #238636;
+            color: #fff;
+            border-color: #2ea043;
+        }
+        .btn-primary:hover {
+            background: #2ea043;
+        }
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+        }
+        .btn-secondary:hover {
+            background: var(--surface-elevated);
+            border-color: #5a6575;
+        }
+        .btn-nav {
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            background: var(--surface);
+            color: var(--text);
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            font-family: var(--font-sans);
+        }
+        .btn-nav:hover {
+            border-color: var(--accent);
+            background: var(--surface-elevated);
+        }
+        .btn-nav.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .main {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px 28px 48px;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.loading {
+            background: var(--orange);
+        }
+        .status-dot.loaded {
+            background: var(--green);
+            animation: none;
+        }
+        .status-dot.error {
+            background: var(--red);
+            animation: none;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 22px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+        }
+        .section-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+        .dot-system {
+            background: #8b949e;
+        }
+        .dot-prompt {
+            background: var(--accent);
+        }
+        .section pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 260px;
+            overflow-y: auto;
+            color: #c9d1d9;
+            line-height: 1.55;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+        @media (max-width: 860px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .cmp-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+        .cmp-card:hover {
+            border-color: #5a6575;
+        }
+        .cmp-card.lora {
+            border-top: 3px solid var(--accent);
+        }
+        .cmp-card.base {
+            border-top: 3px solid var(--orange);
+        }
+        .cmp-card-header {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .cmp-card-header .model-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cmp-card-body {
+            padding: 14px 18px;
+            flex: 1;
+            font-family: var(--font-mono);
+            font-size: 0.77rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 520px;
+            overflow-y: auto;
+            color: #c9d1d9;
+            line-height: 1.55;
+            background: var(--bg);
+        }
+
+        .metrics-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 12px 0;
+        }
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.84rem;
+            font-weight: 500;
+        }
+        .metric-value {
+            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 0.88rem;
+        }
+        .metric.faster .metric-value {
+            color: var(--green);
+        }
+        .metric.slower .metric-value {
+            color: var(--orange);
+        }
+        .delta-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+        }
+        .delta-badge.win {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+        .delta-badge.loss {
+            background: var(--orange-bg);
+            color: var(--orange);
+        }
+
+        .test-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .test-nav .label {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .test-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .test-info span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: #1f2937;
+            color: #9ca3af;
+            border: 1px solid #374151;
+        }
+        .tag.task {
+            background: rgba(163, 113, 247, 0.12);
+            color: var(--purple);
+            border-color: rgba(163, 113, 247, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+        .empty-state .icon-big {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        .empty-state p {
+            font-size: 0.9rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f5a;
+        }
+
+        @media (max-width: 600px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .url-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .main {
+                padding: 14px 10px 32px;
+            }
+            .section {
+                padding: 12px 14px;
+            }
+            .cmp-card-body {
+                max-height: 340px;
+            }
+            .metrics-row {
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-title">
+                <span class="icon">🧪</span>
+                <span>Сравнение моделей</span>
+                <span class="badge badge-lora">LoRA (дообученная)</span>
+                <span style="color:var(--text-secondary);">vs</span>
+                <span class="badge badge-base">Base (базовая)</span>
+            </div>
+            <span style="font-size:0.78rem;color:var(--text-secondary);" id="testCountLabel">—</span>
+        </div>
+    </div>
+
+    <div class="url-bar-wrap">
+        <div class="url-bar">
+            <label for="jsonUrl">📁 JSON URL:</label>
+            <input
+            type="text"
+            id="jsonUrl"
+            value="https://raw.githubusercontent.com/aLBInOS1/GovAI/refs/heads/main/comparison_analysis_without_tools.json"
+            placeholder="https://raw.githubusercontent.com/user/repo/main/tests.json"
+            />
+            <button class="btn btn-primary" id="btnLoad" title="Загрузить JSON по ссылке">🔄 Загрузить</button>
+        </div>
+    </div>
+
+    <div class="main" id="mainContent">
+        <div class="empty-state" id="emptyState">
+            <div class="icon-big">📂</div>
+            <p>Укажите ссылку на JSON-файл с результатами тестов и нажмите <strong>«Загрузить»</strong>.</p>
+            <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:10px;">
+                Ожидаемая структура: массив объектов с полями <code>system</code>, <code>test_id</code>, <code>prompt</code>,
+                <code>lora_response</code>, <code>base_response</code>, <code>lora_time_sec</code>, <code>base_time_sec</code>.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const jsonUrlInput = document.getElementById('jsonUrl');
+            const btnLoad = document.getElementById('btnLoad');
+            const mainContent = document.getElementById('mainContent');
+            const testCountLabel = document.getElementById('testCountLabel');
+            const emptyState = document.getElementById('emptyState');
+
+            let allTestCases = [];
+            let systemPrompt = '';
+            let currentTestIdx = 0;
+
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function formatTime(seconds) {
+                if (seconds == null || isNaN(seconds)) return '—';
+                const mins = Math.floor(seconds / 60);
+                const secs = (seconds % 60).toFixed(1);
+                if (mins > 0) return `${mins} мин ${secs} сек`;
+                return `${secs} сек`;
+            }
+
+            function formatDelta(loraSec, baseSec) {
+                if (!loraSec || !baseSec || baseSec === 0) return null;
+                const delta = loraSec - baseSec;
+                const pct = ((delta / baseSec) * 100);
+                const absDelta = Math.abs(delta);
+                const absPct = Math.abs(pct).toFixed(1);
+                if (delta > 0) {
+                    return {
+                        text: `+${formatTime(absDelta)} (+${absPct}%)`,
+                        cls: 'loss',
+                        label: 'медленнее'
+                    };
+                } else if (delta < 0) {
+                    return {
+                        text: `−${formatTime(absDelta)} (−${absPct}%)`,
+                        cls: 'win',
+                        label: 'быстрее'
+                    };
+                }
+                return { text: 'Одинаково', cls: '', label: 'равно' };
+            }
+
+            function renderAll() {
+                if (allTestCases.length === 0) {
+                    mainContent.innerHTML = '';
+                    mainContent.appendChild(emptyState);
+                    emptyState.style.display = '';
+                    testCountLabel.textContent = '—';
+                    return;
+                }
+                emptyState.style.display = 'none';
+                testCountLabel.textContent = `Тестов: ${allTestCases.length}`;
+                const tc = allTestCases[currentTestIdx];
+                if (!tc) return;
+
+                const sysPrompt = tc.system || systemPrompt || '';
+                const delta = formatDelta(tc.lora_time_sec, tc.base_time_sec);
+
+                const html = `
+                <div class="section">
+                    <div class="section-header"><span class="dot dot-system"></span> Системный промпт</div>
+                    <pre>${escapeHTML(sysPrompt)}</pre>
+                </div>
+
+                <div class="test-nav">
+                    <span class="label">🧭 Тест-кейс:</span>
+                    ${allTestCases.map((t, i) => `
+                        <button class="btn-nav ${i === currentTestIdx ? 'active' : ''}" data-idx="${i}">
+                            #${t.test_id || (i + 1)}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="test-info">
+                    <span class="tag task">📋 ${escapeHTML(tc.task_type || 'general')}</span>
+                    <span>🆔 ID: ${tc.test_id || '—'}</span>
+                    <span>📝 Символов в промпте: ~${(tc.prompt || '').length.toLocaleString()}</span>
+                </div>
+
+                <div class="section">
+                    <div class="section-header"><span class="dot dot-prompt"></span> Пользовательский запрос (prompt)</div>
+                    <pre>${escapeHTML(tc.prompt || '')}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="cmp-card lora">
+                        <div class="cmp-card-header">
+                            <span class="model-name">
+                                <span class="badge badge-lora">🧠 LoRA</span> Дообученная модель
+                            </span>
+                            <span style="font-size:0.76rem;color:var(--text-secondary);">
+                                ⏱ ${formatTime(tc.lora_time_sec)}
+                            </span>
+                        </div>
+                        <div class="cmp-card-body">${escapeHTML(tc.lora_response || '')}</div>
+                    </div>
+                    <div class="cmp-card base">
+                        <div class="cmp-card-header">
+                            <span class="model-name">
+                                <span class="badge badge-base">🏗️ Base</span> Базовая модель
+                            </span>
+                            <span style="font-size:0.76rem;color:var(--text-secondary);">
+                                ⏱ ${formatTime(tc.base_time_sec)}
+                            </span>
+                        </div>
+                        <div class="cmp-card-body">${escapeHTML(tc.base_response || '')}</div>
+                    </div>
+                </div>
+
+                <div class="section" style="padding:14px 22px;">
+                    <div class="metrics-row">
+                        <div class="metric">
+                            ⏱ <strong>LoRA:</strong>
+                            <span class="metric-value">${formatTime(tc.lora_time_sec)}</span>
+                        </div>
+                        <div class="metric">
+                            ⏱ <strong>Base:</strong>
+                            <span class="metric-value">${formatTime(tc.base_time_sec)}</span>
+                        </div>
+                        ${delta ? `
+                        <div class="metric ${delta.cls === 'win' ? 'faster' : (delta.cls === 'loss' ? 'slower' : '')}">
+                            📊 <strong>Дельта:</strong>
+                            <span class="delta-badge ${delta.cls}">${delta.text}</span>
+                            <span style="font-size:0.74rem;color:var(--text-secondary);">(${delta.label})</span>
+                        </div>` : ''}
+                        <div style="margin-left:auto;font-size:0.74rem;color:var(--text-secondary);">
+                            📐 Символов LoRA: <strong>${(tc.lora_response || '').length.toLocaleString()}</strong>
+                            &nbsp;|&nbsp;
+                            Символов Base: <strong>${(tc.base_response || '').length.toLocaleString()}</strong>
+                        </div>
+                    </div>
+                </div>
+                `;
+
+                mainContent.innerHTML = html;
+
+                mainContent.querySelectorAll('.btn-nav').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const idx = parseInt(this.getAttribute('data-idx'), 10);
+                        if (!isNaN(idx) && idx >= 0 && idx < allTestCases.length) {
+                            currentTestIdx = idx;
+                            renderAll();
+                            window.scrollTo({ top: 180, behavior: 'smooth' });
+                        }
+                    });
+                });
+            }
+
+            function parseAndLoad(data) {
+                let extracted = [];
+                let extractedSystem = '';
+
+                if (Array.isArray(data)) {
+                    for (const item of data) {
+                        if (item.system && !item.test_id && !item.prompt) {
+                            extractedSystem = item.system;
+                        } else if (item.test_id || item.prompt) {
+                            extracted.push(item);
+                        }
+                    }
+                    if (!extractedSystem && extracted.length > 0 && extracted[0].system) {
+                        extractedSystem = extracted[0].system;
+                    }
+                } else if (data && typeof data === 'object') {
+                    if (data.test_id || data.prompt) {
+                        extracted = [data];
+                        extractedSystem = data.system || '';
+                    } else {
+                        for (const key of Object.keys(data)) {
+                            const val = data[key];
+                            if (val && typeof val === 'object') {
+                                if (val.system && !val.test_id && !val.prompt) {
+                                    extractedSystem = val.system;
+                                } else {
+                                    extracted.push(val);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (extracted.length === 0) {
+                    throw new Error(
+                        'Не удалось найти тестовые кейсы в JSON. Ожидаются объекты с полями test_id, prompt, lora_response, base_response.');
+                }
+
+                allTestCases = extracted;
+                systemPrompt = extractedSystem || extracted[0]?.system || '';
+                currentTestIdx = 0;
+                renderAll();
+            }
+
+            async function loadFromURL(url) {
+                mainContent.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon-big">⏳</div>
+                    <p>Загрузка данных с <code>${escapeHTML(url)}</code>...</p>
+                    <span class="status-dot loading" style="display:inline-block;margin-top:12px;"></span>
+                </div>`;
+                testCountLabel.textContent = 'Загрузка...';
+
+                let response;
+                try {
+                    response = await fetch(url, {
+                        headers: { 'Accept': 'application/json' },
+                    });
+                } catch (netErr) {
+                    throw new Error(`Сетевая ошибка: ${netErr.message}. Проверьте URL и доступность ресурса.`);
+                }
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}. Проверьте корректность ссылки.`);
+                }
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (jsonErr) {
+                    throw new Error(`Ошибка парсинга JSON: ${jsonErr.message}. Файл должен быть валидным JSON.`);
+                }
+
+                parseAndLoad(data);
+                testCountLabel.textContent = `Тестов: ${allTestCases.length} — загружено ✅`;
+            }
+
+            btnLoad.addEventListener('click', async () => {
+                const url = jsonUrlInput.value.trim();
+                if (!url) {
+                    alert('Введите URL JSON-файла.');
+                    return;
+                }
+                try {
+                    await loadFromURL(url);
+                } catch (err) {
+                    mainContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon-big">⚠️</div>
+                        <p style="color:var(--red);"><strong>Ошибка загрузки</strong></p>
+                        <p>${escapeHTML(err.message)}</p>
+                        <button class="btn btn-secondary" style="margin-top:16px;" id="btnRetry">🔄 Попробовать снова</button>
+                    </div>`;
+                    testCountLabel.textContent = 'Ошибка';
+                    document.getElementById('btnRetry')?.addEventListener('click', () => btnLoad.click());
+                }
+            });
+
+            jsonUrlInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    btnLoad.click();
+                }
+            });
+
+            renderAll();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryUrl = urlParams.get('json') || urlParams.get('url') || urlParams.get('data');
+            if (queryUrl) {
+                jsonUrlInput.value = queryUrl;
+                setTimeout(() => btnLoad.click(), 400);
+            }
+
+            console.log('🧪 LoRA vs Base Model Comparison Dashboard готов.');
+            console.log('   Укажите URL вашего JSON и нажмите «Загрузить».');
+            console.log('   Можно передать ?json=URL в адресной строке для автозагрузки.');
+        })();
+    </script>
+</body>
+</html>
