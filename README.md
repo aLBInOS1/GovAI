@@ -322,7 +322,7 @@ build_chart(chart_type="pie", data={"А": 60, "Б": 40}, title="Распреде
 
 </details>
 
-📊 **Полные результаты сравнения:** смотрите [comparison_viewer.html](comparison_viewer.html)
+📊 **Полные результаты сравнения:** смотрите [comparison_viewer.html](https://albinos1.github.io/GovAI/comparison_viewer.html)
 
 ---
 
