@@ -9,6 +9,8 @@
 
 > **GovAI** — специализированный ИИ-агент для анализа государственных данных, стратегического планирования и оптимизации бюджетных направлений субъектов РФ.
 
+🌐 **English version:** [README_EN.md](README_EN.md)
+
 🔗 **Сравнение с базовой моделью:** [Смотреть результаты](https://albinos1.github.io/GovAI/comparison_viewer.html) | [Model Comparison](https://albinos1.github.io/GovAI/comparison_viewer.html)
 
 ---
