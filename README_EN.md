@@ -357,21 +357,12 @@ Article prepared for submission to:
 
 ```
 GovAI/
-├── src/
-│   ├── generate_v11_dataset.py      # Dataset generator v11
-│   ├── tools.py                     # Agent tools (charts, search)
-│   ├── inference_comparison.py      # Comparison script
-│   ├── analyze_v11.py               # Dataset quality analysis
-│   └── check_*.py                   # Validation scripts
-├── notebooks/
-│   ├── govai-lora-2-gpu.ipynb      # Training notebook
-│   └── inference_comparison_2gpu.ipynb  # Inference notebook
-├── docs/
-│   └── article_draft_v2.txt         # Article draft
-├── comparison_results.json          # Comparison results
-├── comparison_viewer.html          # Interactive comparison viewer
-├── README.md                        # Russian version (main)
-└── README_EN.md                     # English version (this file)
+├── kaggle_lora_train (2GPU unsloth).ipynb   # Kaggle notebook for training
+├── kaggle_inference_stream.ipynb            # Kaggle notebook for inference
+├── comparison_viewer.html                   # Testing viewer tool
+├── comparison_analysis_without_tools.json   # JSON tests
+├── README_EN.md                             # English version (this file)
+└── README.md                                # Russian version
 ```
 
 ---
