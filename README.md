@@ -368,15 +368,12 @@ build_chart(chart_type="pie", data={"А": 60, "Б": 40}, title="Распреде
 
 ```
 GovAI_Dataset/
-├── generate_v11_dataset.py      # Генератор датасета v11
-├── govai_v11_dataset.json       # Датасет (1500+ примеров)
-├── tools.py                     # Инструменты агента (графики, поиск)
-├── inference_comparison.py      # Скрипт сравнения с базовой моделью
-├── comparison_results.json      # Результаты сравнения
-├── analyze_v11.py               # Анализ качества датасета
-├── govai_qwen35_4b_lora_v11.zip # Веса LoRA-адаптера
-├── article_draft_v2.txt         # Черновик статьи
-└── README.md                    # Этот файл
+├── kaggle_lora_train (2GPU unsloth).ipynb   # Kaggle-ноутбук для запуска обучения
+├── kaggle_inference_stream.ipynb            # Kaggle-ноутбук для запуска моделей
+├── comparison_viewer.html                   # Инструмент для просмотра тестов
+├── comparison_analysis_without_tools.json   # JSON-тестов
+├── README_EN.md                             # Readme на английском
+└── README.md                                # Этот файл
 ```
 
 ---
