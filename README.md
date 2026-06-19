@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Model-Qwen3.5--4B-blue" alt="Model: Qwen3.5-4B">
   <img src="https://img.shields.io/badge/Method-LoRA%20(r=16)-green" alt="Method: LoRA r=16">
-  <img src="https://img.shields.io/badge/Dataset-1500%2B%20samples-orange" alt="Dataset: 1500+ samples">
+  <img src="https://img.shields.io/badge/Dataset-500%20examples-orange" alt="Dataset: 500 examples">
   <img src="https://img.shields.io/badge/Platform-Kaggle%202xT4-purple" alt="Platform: Kaggle 2xT4">
 </p>
 
@@ -66,7 +66,7 @@ GovAI — это не просто чат-бот для работы с гос. 
 - **Квантизация:** 4-bit NF4 — обучение на 2×T4 (15GB каждая)
 
 ### 📚 Датасет v11
-- **1500+ примеров** 10 типов задач:
+- **500 примеров** 10 типов задач:
   - `budget_reduction` — сокращение бюджета с обоснованием по КОСГУ
   - `purchase_analysis` — анализ закупки по 44-ФЗ
   - `purchase_methods` — выбор способа закупки
@@ -333,10 +333,11 @@ build_chart(chart_type="pie", data={"А": 60, "Б": 40}, title="Распреде
 
 ### Метрики обучения (v11)
 - **Платформа:** Kaggle, 2×T4 GPU
-- **LoRA:** r=16, alpha=32, dropout=0.05
-- **Эпохи:** 6 (early stopping с patience=3)
+- **LoRA:** r=16
+- **Batch size:** 1
+- **Gradient accumulation steps:** 4
+- **Эпохи:** 2
 - **Время обучения:** ~3 часа
-- **Final loss:** ~0.20 (в норме, без переобучения)
 
 ### Снижение галлюцинаций
 - LoRA-адаптация на специализированном датасете **снижает галлюцинации** на гос. лексике

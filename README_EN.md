@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Model-Qwen3.5--4B-blue" alt="Model: Qwen3.5-4B">
   <img src="https://img.shields.io/badge/Method-LoRA%20(r=16)-green" alt="Method: LoRA r=16">
-  <img src="https://img.shields.io/badge/Dataset-1500%2B%20samples-orange" alt="Dataset: 1500+ samples">
+  <img src="https://img.shields.io/badge/Dataset-500%20examples-orange" alt="Dataset: 500 examples">
   <img src="https://img.shields.io/badge/Platform-Kaggle%202xT4-purple" alt="Platform: Kaggle 2xT4">
 </p>
 
@@ -66,7 +66,7 @@ Unlike universal LLMs (GPT-4, Claude) and generic solutions (LM Studio + Qwen):
 - **Quantization:** 4-bit NF4 — training on 2×T4 (15GB each)
 
 ### 📚 Dataset v11
-- **1500+ examples** across 10 task types:
+- **500 examples** across 10 task types:
   - `budget_reduction` — budget reduction with KOSGU justification
   - `purchase_analysis` — procurement analysis under 44-FZ
   - `purchase_methods` — procurement method selection
@@ -314,8 +314,10 @@ We conducted a comparison of GovAI (LoRA) vs base Qwen3.5-4B on test queries fro
 
 ### Training Metrics (v11)
 - **Platform:** Kaggle, 2×T4 GPU
-- **LoRA:** r=16, alpha=32, dropout=0.05
-- **Epochs:** 6 (early stopping with patience=3)
+- **LoRA:** r=16
+- **Batch size:** 1
+- **Gradient accumulation steps:** 4
+- **Epochs:** 2
 - **Training time:** ~3 hours
 - **Final loss:** ~0.20 (normal, no overfitting)
 
