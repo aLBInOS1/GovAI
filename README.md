@@ -138,27 +138,6 @@ GovAI — это не просто чат-бот для работы с гос. 
 ---
 
 ## Датасет
-
-### Статистика v11
-```
-Total samples: 1500
-Task distribution:
-  budget_reduction:     150 (10.0%)
-  purchase_analysis:    200 (13.3%)
-  purchase_methods:     150 (10.0%)
-  dynamics_analysis:    150 (10.0%)
-  region_comparison:    150 (10.0%)
-  procurement_planning: 150 (10.0%)
-  strategy_development: 250 (16.7%)
-  gpp_analysis:         150 (10.0%)
-  energy_audit:         150 (10.0%)
-  law_reference:        150 (10.0%)
-
-Avg instruction length: 350 chars
-Avg output length:      1800 chars
-Total law citations:    3200+
-```
-
 ### Пример из датасета
 
 **Instruction:**
