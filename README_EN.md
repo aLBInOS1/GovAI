@@ -123,22 +123,13 @@ Unlike universal LLMs (GPT-4, Claude) and generic solutions (LM Studio + Qwen):
 
 ### v11 Statistics
 ```
-Total samples: 1500
-Task distribution:
-  budget_reduction:     150 (10.0%)
-  purchase_analysis:    200 (13.3%)
-  purchase_methods:     150 (10.0%)
-  dynamics_analysis:    150 (10.0%)
-  region_comparison:    150 (10.0%)
-  procurement_planning: 150 (10.0%)
-  strategy_development: 250 (16.7%)
-  gpp_analysis:         150 (10.0%)
-  energy_audit:         150 (10.0%)
-  law_reference:        150 (10.0%)
-
-Avg instruction length: 350 chars
-Avg output length:      1800 chars
-Total law citations:    3200+
+Total samples: 500
+Topics: 11
+Avg output length:      1237 ± 222 chars
+Median output length:   1220 chars
+Total law citations:    1508
+Unique legal provisions: 45
+Avg citations per example: 3.0
 ```
 
 ### Dataset Example
@@ -319,7 +310,6 @@ We conducted a comparison of GovAI (LoRA) vs base Qwen3.5-4B on test queries fro
 - **Gradient accumulation steps:** 4
 - **Epochs:** 2
 - **Training time:** ~3 hours
-- **Final loss:** ~0.20 (normal, no overfitting)
 
 ### Hallucination Reduction
 - LoRA adaptation on specialized dataset **reduces hallucinations** on government vocabulary
