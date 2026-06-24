@@ -66,9 +66,10 @@ GovAI — это не просто чат-бот для работы с гос. 
 - **Квантизация:** 4-bit NF4 — обучение на 2×T4 (15GB каждая)
 
 ### 📚 Датасет v11
-- **500 примеров** 10 типов задач:
+- **500 примеров** 11 типов задач:
   - `budget_reduction` — сокращение бюджета с обоснованием по КОСГУ
   - `purchase_analysis` — анализ закупки по 44-ФЗ
+  - `purchase_analysis_223fz` — анализ закупки по 223-ФЗ
   - `purchase_methods` — выбор способа закупки
   - `dynamics_analysis` — анализ динамики расходов
   - `region_comparison` — сравнение регионов
@@ -138,8 +139,6 @@ GovAI — это не просто чат-бот для работы с гос. 
 ---
 
 ## Датасет
-<<<<<<< Updated upstream
-=======
 
 ### Статистика v11
 ```
@@ -152,7 +151,6 @@ Unique legal provisions: 45
 Avg citations per example: 3.0
 ```
 
->>>>>>> Stashed changes
 ### Пример из датасета
 
 **Instruction:**
@@ -229,7 +227,10 @@ search_purchases(
 pip install torch transformers unsloth peft accelerate matplotlib numpy
 ```
 
-Адаптер доступен в [релизах](https://github.com/aLBInOS1/GovAI/releases/)
+### Артефакты проекта
+- **LoRA-адаптер** (`govai_qwen35_4b_lora_v11.zip`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
+- **Датасет GovAI v11** (`govai_v11_dataset.json`): [Kaggle Dataset](https://www.kaggle.com/datasets/)
+- **Kaggle-ноутбуки** для обучения и инференса: см. раздел [Структура репозитория](#структура-репозитория)
 
 ### Инференс с LoRA-адаптером
 ```python
@@ -331,7 +332,7 @@ build_chart(chart_type="pie", data={"А": 60, "Б": 40}, title="Распреде
 - **Batch size:** 1
 - **Gradient accumulation steps:** 4
 - **Эпохи:** 2
-- **Время обучения:** ~3 часа
+- **Время обучения:** ~30 минут на корпусе из 500 примеров
 
 ### Снижение галлюцинаций
 - LoRA-адаптация на специализированном датасете **снижает галлюцинации** на гос. лексике
@@ -342,6 +343,14 @@ build_chart(chart_type="pie", data={"А": 60, "Б": 40}, title="Распреде
 - Модель требует проверки цитат законов (рекомендуется RAG-слой)
 - Для production рекомендуется расширение датасета до 5000+ примеров
 - Для работы рекомендуется использовать модель с большим числом параметров
+
+---
+
+## 📄 Публикации
+
+Материалы проекта подготовлены для публикации в:
+- [KII-2025](http://kii-2025.ru/) — Конференция по искусственному интеллекту (Россия)
+- [AI Conference](https://aiconference.ru/) — Российская конференция по ИИ
 
 ---
 
@@ -362,11 +371,12 @@ build_chart(chart_type="pie", data={"А": 60, "Б": 40}, title="Распреде
 ## 📁 Структура репозитория
 
 ```
-GovAI_Dataset/
-├── kaggle_lora_train (2GPU unsloth).ipynb   # Kaggle-ноутбук для запуска обучения
-├── kaggle_inference_stream.ipynb            # Kaggle-ноутбук для запуска моделей
-├── comparison_viewer.html                   # Инструмент для просмотра тестов
-├── comparison_analysis_without_tools.json   # JSON-тестов
+GovAI/
+├── kaggle_lora_train (2GPU unsloth).ipynb   # Kaggle-ноутбук для обучения LoRA-адаптера
+├── kaggle_inference_stream.ipynb            # Kaggle-ноутбук для инференса с LoRA + tools
+├── kaggle_inference_advanced.ipynb          # Расширенный инференс с RAG и tool calling
+├── comparison_viewer.html                   # Интерактивный просмотр сравнения моделей
+├── comparison_analysis_without_tools.json   # Результаты сравнения LoRA vs Base
 ├── README_EN.md                             # Readme на английском
 └── README.md                                # Этот файл
 ```

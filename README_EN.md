@@ -66,9 +66,10 @@ Unlike universal LLMs (GPT-4, Claude) and generic solutions (LM Studio + Qwen):
 - **Quantization:** 4-bit NF4 — training on 2×T4 (15GB each)
 
 ### 📚 Dataset v11
-- **500 examples** across 10 task types:
+- **500 examples** across 11 task types:
   - `budget_reduction` — budget reduction with KOSGU justification
   - `purchase_analysis` — procurement analysis under 44-FZ
+  - `purchase_analysis_223fz` — procurement analysis under 223-FZ
   - `purchase_methods` — procurement method selection
   - `dynamics_analysis` — expense dynamics analysis
   - `region_comparison` — regional comparison
@@ -207,7 +208,10 @@ search_purchases(
 pip install torch transformers unsloth peft accelerate matplotlib numpy
 ```
 
-The adapter is available in [releases](https://github.com/aLBInOS1/GovAI/releases/)
+### Project artifacts
+- **LoRA adapter** (`govai_qwen35_4b_lora_v11.zip`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
+- **GovAI v11 dataset** (`govai_v11_dataset.json`): [Kaggle Dataset](https://www.kaggle.com/datasets/)
+- **Kaggle notebooks** for training and inference: see [Repository Structure](#repository-structure)
 
 ### Inference with LoRA Adapter
 ```python
@@ -309,7 +313,7 @@ We conducted a comparison of GovAI (LoRA) vs base Qwen3.5-4B on test queries fro
 - **Batch size:** 1
 - **Gradient accumulation steps:** 4
 - **Epochs:** 2
-- **Training time:** ~3 hours
+- **Training time:** ~30 minutes on 500-sample corpus
 
 ### Hallucination Reduction
 - LoRA adaptation on specialized dataset **reduces hallucinations** on government vocabulary
@@ -349,10 +353,12 @@ Article prepared for submission to:
 
 ```
 GovAI/
-├── kaggle_lora_train (2GPU unsloth).ipynb   # Kaggle notebook for training
-├── kaggle_inference_stream.ipynb            # Kaggle notebook for inference
-├── comparison_viewer.html                   # Testing viewer tool
-├── comparison_analysis_without_tools.json   # JSON tests
+├── kaggle_lora_train (2GPU unsloth).ipynb   # Kaggle notebook for LoRA training
+├── kaggle_inference_stream.ipynb            # Kaggle notebook for inference with LoRA + tools
+├── kaggle_inference_advanced.ipynb          # Advanced inference with RAG and tool calling
+├── comparison_viewer.html                   # Interactive model comparison viewer
+├── comparison_analysis_without_tools.json   # LoRA vs Base comparison results
+├── LICENSE                                  # MIT License
 ├── README_EN.md                             # English version (this file)
 └── README.md                                # Russian version
 ```
