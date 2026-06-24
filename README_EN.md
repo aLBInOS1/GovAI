@@ -210,7 +210,7 @@ pip install torch transformers unsloth peft accelerate matplotlib numpy
 
 ### Project artifacts
 - **LoRA adapter** (`govai_qwen35_4b_lora_v11.zip`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
-- **GovAI v11 dataset** (`govai_v11_dataset.json`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
+- **GovAI v11 dataset** (`gov_analytics_dataset_v11.jsonl`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
 - **Kaggle notebooks** for training and inference: see [Repository Structure](#repository-structure)
 
 ### Inference with LoRA Adapter
