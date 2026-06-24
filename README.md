@@ -229,7 +229,7 @@ pip install torch transformers unsloth peft accelerate matplotlib numpy
 
 ### Артефакты проекта
 - **LoRA-адаптер** (`govai_qwen35_4b_lora_v11.zip`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
-- **Датасет GovAI v11** (`govai_v11_dataset.json`): [Kaggle Dataset](https://www.kaggle.com/datasets/)
+- **Датасет GovAI v11** (`govai_v11_dataset.json`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
 - **Kaggle-ноутбуки** для обучения и инференса: см. раздел [Структура репозитория](#структура-репозитория)
 
 ### Инференс с LoRA-адаптером
@@ -343,14 +343,6 @@ build_chart(chart_type="pie", data={"А": 60, "Б": 40}, title="Распреде
 - Модель требует проверки цитат законов (рекомендуется RAG-слой)
 - Для production рекомендуется расширение датасета до 5000+ примеров
 - Для работы рекомендуется использовать модель с большим числом параметров
-
----
-
-## 📄 Публикации
-
-Материалы проекта подготовлены для публикации в:
-- [KII-2025](http://kii-2025.ru/) — Конференция по искусственному интеллекту (Россия)
-- [AI Conference](https://aiconference.ru/) — Российская конференция по ИИ
 
 ---
 

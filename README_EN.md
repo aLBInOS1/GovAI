@@ -210,7 +210,7 @@ pip install torch transformers unsloth peft accelerate matplotlib numpy
 
 ### Project artifacts
 - **LoRA adapter** (`govai_qwen35_4b_lora_v11.zip`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
-- **GovAI v11 dataset** (`govai_v11_dataset.json`): [Kaggle Dataset](https://www.kaggle.com/datasets/)
+- **GovAI v11 dataset** (`govai_v11_dataset.json`): [GitHub Releases](https://github.com/aLBInOS1/GovAI/releases/)
 - **Kaggle notebooks** for training and inference: see [Repository Structure](#repository-structure)
 
 ### Inference with LoRA Adapter
@@ -324,14 +324,6 @@ We conducted a comparison of GovAI (LoRA) vs base Qwen3.5-4B on test queries fro
 - Model requires verification of law citations (RAG layer recommended)
 - For production, dataset expansion to 5000+ examples is recommended
 - For work, it is advisable to use a model with a higher number of parameters
-
----
-
-## Publications
-
-Article prepared for submission to:
-- [KII-2025](http://kii-2025.ru/) — Artificial Intelligence Conference (Russia)
-- [AI Conference](https://aiconference.ru/) — Russian AI Conference
 
 ---
 
