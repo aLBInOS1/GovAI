@@ -138,6 +138,21 @@ GovAI — это не просто чат-бот для работы с гос. 
 ---
 
 ## Датасет
+<<<<<<< Updated upstream
+=======
+
+### Статистика v11
+```
+Total samples: 500
+Topics: 11
+Avg output length:      1237 ± 222 chars
+Median output length:   1220 chars
+Total law citations:    1508
+Unique legal provisions: 45
+Avg citations per example: 3.0
+```
+
+>>>>>>> Stashed changes
 ### Пример из датасета
 
 **Instruction:**
