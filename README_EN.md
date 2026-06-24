@@ -313,7 +313,7 @@ We conducted a comparison of GovAI (LoRA) vs base Qwen3.5-4B on test queries fro
 - **Batch size:** 1
 - **Gradient accumulation steps:** 4
 - **Epochs:** 2
-- **Training time:** ~30 minutes on 500-sample corpus
+- **Training time:** ~3 hours on 500-sample corpus
 
 ### Hallucination Reduction
 - LoRA adaptation on specialized dataset **reduces hallucinations** on government vocabulary
